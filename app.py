@@ -56,6 +56,14 @@ async def post_story_with_sticker(media_url, link):
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    # --- НАЧАЛО БЛОКА ПРОВЕРКИ ПАРОЛЯ ---
+    secret_key = os.environ.get('WEBHOOK_SECRET')
+    provided_key = request.headers.get('x-api-key')
+    
+    if provided_key != secret_key:
+         return jsonify({"error": "Unauthorized"}), 401
+    # --- КОНЕЦ БЛОКА ПРОВЕРКИ ПАРОЛЯ ---
+    
     data = request.json
     media_url = data.get('media_url')
     link = data.get('link')
