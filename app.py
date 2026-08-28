@@ -48,11 +48,10 @@ async def post_story_with_sticker(media_url, link):
 
             # 3. Настраиваем стикер-ссылку
             coords = types.MediaAreaCoordinates(x=50.0, y=85.0, w=40.0, h=8.0, rotation=0.0)
-            link_area = types.InputMediaAreaUrl(
+            link_area = types.MediaAreaUrl(
                 coordinates=coords,
                 url=link
             )
-
             # 4. Отправляем Историю
             await client(functions.stories.SendStoryRequest(
                 peer=await client.get_me(),
