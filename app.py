@@ -84,8 +84,8 @@ async def post_story_with_sticker(media_url, link):
             else:
                 media = types.InputMediaUploadedPhoto(file=uploaded_file)
 
-            # 3. Настраиваем стикер-ссылку (опустил её чуть ниже - y=85.0)
-            coords = types.MediaAreaCoordinates(x=50.0, y=85.0, w=40.0, h=8.0, rotation=0.0)
+            # 3. Настраиваем стикер-ссылку (опустил её чуть ниже - y=90.0)
+            coords = types.MediaAreaCoordinates(x=50.0, y=90.0, w=35.0, h=8.0, rotation=0.0)
             link_area = types.MediaAreaUrl(
                 coordinates=coords,
                 url=link
