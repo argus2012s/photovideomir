@@ -15,26 +15,30 @@ SESSION_STRING = os.environ.get('SESSION_STRING', '')
 
 async def post_story_with_sticker(media_url, link):
     try:
-        # ИЗМЕНЕНИЕ ЗДЕСЬ: Создаем клиента прямо внутри функции, 
-        # чтобы он был жестко привязан к текущему потоку (event loop)
         client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
         
-        # Конструкция "async with" автоматически подключится к Телеграм 
-        # и безопасно отключится после публикации
         async with client:
             
-            # 1. Скачиваем медиа
-            ext = media_url.split('.')[-1][:4] if '.' in media_url else 'jpg'
+            # 1. Скачиваем медиа "умным" способом
+            response = requests.get(media_url)
+            content_type = response.headers.get('Content-Type', '')
+            
+            # Определяем, видео это или картинка, по реальным данным от сервера
+            if 'video' in content_type or 'mp4' in media_url.lower():
+                ext = 'mp4'
+            else:
+                ext = 'jpg'
+                
             file_path = f"temp_story.{ext}"
             
-            img_data = requests.get(media_url).content
+            # Сохраняем файл
             with open(file_path, 'wb') as handler:
-                handler.write(img_data)
+                handler.write(response.content)
 
             # 2. Загружаем файл на сервер Телеграм
             uploaded_file = await client.upload_file(file_path)
             
-            if file_path.endswith(('mp4', 'mov')):
+            if ext == 'mp4':
                 media = types.InputMediaUploadedDocument(
                     file=uploaded_file, mime_type='video/mp4',
                     attributes=[types.DocumentAttributeVideo(0, 0, 0)]
